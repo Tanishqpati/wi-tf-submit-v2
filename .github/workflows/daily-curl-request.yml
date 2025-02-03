@@ -1,0 +1,41 @@
+name: Daily Curl Request Automation
+
+on:
+  schedule:
+    # Run at 11:30 AM UTC (5 PM IST) from Monday to Friday
+    - cron: '30 11 * * 1-5'
+
+jobs:
+  curl-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run Python script
+        id: curl-request
+        run: |
+          python automate_curl.py
+
+      - name: Notify on failure
+        if: ${{ failure() }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: issue } = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "Daily Curl Request Failed",
+              body: "The daily curl request failed. Please check the logs for more details.",
+            });
+            console.log(`Issue created: ${issue.html_url}`);

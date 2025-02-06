@@ -75,11 +75,18 @@ headers = {
 
 # Make the request
 try:
+    print("Sending request with the following payload:")
+    print(payload)  # Log the payload being sent
+
     response = requests.post(
         "https://forms.zohopublic.in/gurmindersinghkal1/form/Signup/formperma/GeJFMLBDfoWlIJfhI46Qyx0Dlf3kHhMSRsvMItq_Riw/records",
         headers=headers,
         json=payload
     )
+    
+    print("Response status code:", response.status_code)  # Log the status code
+    print("Response content:", response.content)  # Log the response content
+
     response.raise_for_status()
     print("Request successful!")
 except requests.exceptions.RequestException as e:
